@@ -18,6 +18,73 @@ class LoginForm(AuthenticationForm):
     )
 
 
+from django import forms
+from .models import Material, ProjectElement
+
+
+class MaterialForm(forms.ModelForm):
+    ELEMENT_MATERIAL_CHOICES = {
+        "Framing": [
+            ("Exterior Wall Framing", "Exterior Wall Framing"),
+            ("Roof Framing", "Roof Framing"),
+            ("Door Framing", "Door Framing"),
+        ],
+        "Window and Door Installation": [
+            ("Barn Door", "Barn Door"),
+            ("Sliding Door", "Sliding Door"),
+        ],
+        "Electrical": [
+            ("Light Switches", "Light Switches"),
+            ("Main Panel", "Main Panel"),
+        ],
+        "Plumbing": [
+            ("Shower Fixture", "Shower Fixture"),
+            ("Toilet Installation", "Toilet Installation"),
+        ],
+    }
+
+    name = forms.ChoiceField(
+        choices=[], widget=forms.Select(attrs={"class": "form-control"})
+    )
+
+    class Meta:
+        model = Material
+        fields = ["name", "quantity", "unit", "price_per_qty", "markup_percentage"]
+
+        widgets = {
+            "quantity": forms.NumberInput(attrs={"class": "form-control"}),
+            "unit": forms.TextInput(attrs={"class": "form-control"}),
+            "price_per_qty": forms.NumberInput(attrs={"class": "form-control"}),
+            "markup_percentage": forms.NumberInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        element = kwargs.pop("element", None)
+        super().__init__(*args, **kwargs)
+
+        if element and element.name in self.ELEMENT_MATERIAL_CHOICES:
+            self.fields["name"].choices = self.ELEMENT_MATERIAL_CHOICES[element.name]
+        else:
+            self.fields["name"].choices = []
+
+
+class ProjectElementForm(forms.ModelForm):
+    ELEMENT_CHOICES = [
+        ("Framing", "Framing"),
+        ("Window and Door Installation", "Window and Door Installation"),
+        ("Electrical", "Electrical"),
+        ("Plumbing", "Plumbing"),
+    ]
+
+    name = forms.ChoiceField(
+        choices=ELEMENT_CHOICES, widget=forms.Select(attrs={"class": "form-control"})
+    )
+
+    class Meta:
+        model = ProjectElement
+        fields = ["name"]
+
+
 class ProjectUpdateForm(forms.ModelForm):
     class Meta:
         model = Project

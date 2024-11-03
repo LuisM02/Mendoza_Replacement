@@ -82,11 +82,18 @@
         </div>
     </div>
 
+    <div class='mt-4'>
+        <a href="{% url 'update_element' project.id %}" class="btn btn-primary">Update element</a>
+    </div>
+
     <div class="mt-4">
         <h5>Project Element</h5>
         <ul class="list-group">
             {% for element in project.elements.all %}
-                <li class="list-group-item">{{ element.name }}</li>
+                <li class="list-group-item">{{ element.name }}
+                <a href="{% url 'update_material' project_id=project.id element_id=element.id %}" class="btn btn-primary">Update material</a>
+
+                </li>
             {% empty %}
                 <li class="list-group-item">No elements associated with this project.</li>
             {% endfor %}
@@ -109,7 +116,7 @@
                     <li class="list-group-item">No elements associated with this project.</li>
                 {% endfor %}
             {% empty %}
-                <li class="list-group-item">No elements associated with this project.</li>
+                <li class="list-group-item">No elements associated with {{element.name}} with this project.</li>
             {% endfor %}
         </ul>
     </div>
@@ -159,7 +166,7 @@
                         <li class="list-group-item">No elements associated with this project.</li>
                     {% endfor %}
                 {% empty %}
-                    <li class="list-group-item">No elements associated with this project.</li>
+                    <li class="list-group-item">No elements associated with {{element.name}} with this project.</li>
                 {% endfor %}
             </ul>
         </div>

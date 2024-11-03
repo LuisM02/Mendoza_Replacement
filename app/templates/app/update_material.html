@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Material{% endblock %}
+
+{% block css %}
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 250px;
+        background-color: #343a40;
+        padding-top: 20px;
+        color: white;
+    }
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        color: white;
+        display: block;
+    }
+    .sidebar a:hover {
+        background-color: #495057;
+    }
+    .content {
+        margin-left: 260px; /* Space for the sidebar */
+    }
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .no-projects {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 1.2em;
+        color: #6c757d;
+    }
+
+    .project-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%; /* Full width button */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sidebar">
+    <h4>Navigation Bar</h4>
+    <a href="{% url 'request_quote' %}">Request a Quote</a>
+    {% if user.is_superuser %}
+
+    <a href="{% url 'project_list_approved' %}">Approved</a>
+    <a href="{% url 'project_list_declined' %}">Declined</a>
+    <a href="{% url 'project_list_completed' %}">Completed</a>
+    
+    {% endif %}
+    <form action="{% url 'logout' %}" method="post" class="mt-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-block" style="background-color: #dc3545; border: none;">Log Out</button>
+    </form>
+</div>
+
+<div class="content">
+    <h2>Update Material</h2>
+
+    <div class="container mt-5">
+        <div class="project-container">
+            <h2>Add Material</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            <a href="{% url 'project_list' %}" class="btn btn-secondary mt-3">View Project List</a>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="project-container">
+            <h2>Remove Existing Element</h2>
+
+            <ul class="list-group">
+
+                {% for material in element.materials.all %}
+                <li class="list-group-item">{{ material.name }}
+
+                    <a href="{% url 'delete_material' material.id %}" class="btn btn-danger">Delete</a>
+                </li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'project_list' %}" class="btn btn-secondary mt-3">View Project List</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

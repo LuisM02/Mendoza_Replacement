@@ -11,4 +11,23 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("request_quote/", views.request_quote, name="request_quote"),
     path("<int:project_id>/", views.project_detail, name="project_detail"),
+    path(
+        "<int:project_id>/update_element/", views.update_element, name="update_element"
+    ),
+    path(
+        "<int:project_id>/<int:element_id>/update_material/",
+        views.update_material,
+        name="update_material",
+    ),
+]
+
+urlpatterns += [
+    path(
+        "<int:element_id>/delete/", views.delete_project_element, name="delete_element"
+    ),
+    path(
+        "<int:material_id>/delete/",
+        views.delete_project_element_material,
+        name="delete_material",
+    ),
 ]

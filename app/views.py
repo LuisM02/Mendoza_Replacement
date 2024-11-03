@@ -1,4 +1,11 @@
-from .forms import LoginForm, ProjectUpdateForm, RegisterForm, RequestQuoteForm
+from .forms import (
+    LoginForm,
+    MaterialForm,
+    ProjectElementForm,
+    ProjectUpdateForm,
+    RegisterForm,
+    RequestQuoteForm,
+)
 from .models import Material, Project, ProjectElement
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -6,6 +13,22 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 
 # Create your views here.
+@login_required
+def delete_project_element(request, element_id):
+    element = get_object_or_404(ProjectElement, id=element_id)
+    project_id = element.project.id
+    element.delete()
+    return redirect("project_detail", project_id=project_id)
+
+
+@login_required
+def delete_project_element_material(request, material_id):
+    material = get_object_or_404(Material, id=material_id)
+    project_id = material.element.project.id
+    material.delete()
+    return redirect("project_detail", project_id=project_id)
+
+
 def login(request):
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
@@ -206,18 +229,41 @@ def update_element(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     form = None
 
+    if request.method == "POST":
+        form = ProjectElementForm(request.POST)
+        if form.is_valid():
+            element = form.save(commit=False)
+            element.project = project
+            element.save()
+            return redirect("project_detail", project_id=project.pk)
+    else:
+        form = ProjectElementForm()
+
     return render(
         request, "app/update_element.html", {"project": project, "form": form}
     )
 
 
 @login_required
-def update_material(request, project_id):
+def update_material(request, project_id, element_id):
     project = get_object_or_404(Project, pk=project_id)
+    element = get_object_or_404(ProjectElement, pk=element_id)
     form = None
 
+    if request.method == "POST":
+        form = MaterialForm(request.POST, element=element)
+        if form.is_valid():
+            material = form.save(commit=False)
+            material.element = element
+            material.save()
+            return redirect("element_detail", project_id=element_id)
+    else:
+        form = MaterialForm(element=element)
+
     return render(
-        request, "app/update_element.html", {"project": project, "form": form}
+        request,
+        "app/update_material.html",
+        {"element": element, "project": project, "form": form},
     )
 
 
