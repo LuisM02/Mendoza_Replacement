@@ -18,10 +18,6 @@ class LoginForm(AuthenticationForm):
     )
 
 
-from django import forms
-from .models import Material, ProjectElement
-
-
 class MaterialForm(forms.ModelForm):
     ELEMENT_MATERIAL_CHOICES = {
         "Framing": [
@@ -66,6 +62,20 @@ class MaterialForm(forms.ModelForm):
             self.fields["name"].choices = self.ELEMENT_MATERIAL_CHOICES[element.name]
         else:
             self.fields["name"].choices = []
+
+
+class MaterialUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Material
+        fields = ["name", "quantity", "unit", "price_per_qty", "markup_percentage"]
+
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "quantity": forms.NumberInput(attrs={"class": "form-control"}),
+            "unit": forms.TextInput(attrs={"class": "form-control"}),
+            "price_per_qty": forms.NumberInput(attrs={"class": "form-control"}),
+            "markup_percentage": forms.NumberInput(attrs={"class": "form-control"}),
+        }
 
 
 class ProjectElementForm(forms.ModelForm):

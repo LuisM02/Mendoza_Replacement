@@ -111,6 +111,8 @@
                         <p class="card-text"><strong>Unit:</strong> {{ material.unit }}</p>
                         <p class="card-text"><strong>Price/Qty:</strong> {{ material.price_per_qty }}</p>
                         <p class="card-text"><strong>Markup Percentage:</strong> {{ material.markup_percentage }}%</p>
+
+                        <a href="{% url 'update_material_detail' project_id=project.id element_id=element.id material_id=material.id %}" class="btn btn-primary">Update</a>
                     </li>
                 {% empty %}
                     <li class="list-group-item">No elements associated with this project.</li>

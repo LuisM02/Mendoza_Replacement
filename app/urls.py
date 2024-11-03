@@ -19,6 +19,11 @@ urlpatterns = [
         views.update_material,
         name="update_material",
     ),
+    path(
+        "<int:project_id>/<int:element_id>/update_material_detail/<int:material_id>",
+        views.update_material_detail,
+        name="update_material_detail",
+    ),
 ]
 
 urlpatterns += [

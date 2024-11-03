@@ -1,6 +1,7 @@
 from .forms import (
     LoginForm,
     MaterialForm,
+    MaterialUpdateForm,
     ProjectElementForm,
     ProjectUpdateForm,
     RegisterForm,
@@ -264,6 +265,25 @@ def update_material(request, project_id, element_id):
         request,
         "app/update_material.html",
         {"element": element, "project": project, "form": form},
+    )
+
+
+@login_required
+def update_material_detail(request, project_id, element_id, material_id):
+    project = get_object_or_404(Project, pk=project_id)
+    element = get_object_or_404(ProjectElement, pk=element_id)
+    material = get_object_or_404(Material, pk=material_id)
+
+    if request.method == "POST":
+        form = MaterialUpdateForm(request.POST, instance=material)
+        if form.is_valid():
+            form.save()
+            return redirect("project_detail", project_id=project.id)
+    else:
+        form = MaterialUpdateForm(instance=material)
+
+    return render(
+        request, "app/update_material_detail.html", {"form": form, "material": material}
     )
 
 
