@@ -83,10 +83,6 @@
                             <p class="card-text"><strong>Status:</strong> {{ pending.status }}</p>
                             <div>
                                 <a href="{% url 'project_detail' pending.id %}" class="btn btn-warning">View</a>
-                                {% if user.is_superuser %}
-                                    <a href="#" class="btn btn-warning">Edit Project</a>
-                                    <a href="#" class="btn btn-danger">Delete Project</a>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -106,10 +102,6 @@
                             <p class="card-text"><strong>Status:</strong> {{ pending.status }}</p>
                             <div>
                                 <a href="{% url 'project_detail' pending.id %}" class="btn btn-warning">View</a>
-                                {% if user.is_superuser %}
-                                    <a href="#" class="btn btn-warning">Edit Project</a>
-                                    <a href="#" class="btn btn-danger">Delete Project</a>
-                                {% endif %}
                             </div>
                         </div>
                     </div>

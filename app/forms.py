@@ -98,13 +98,12 @@ class ProjectElementForm(forms.ModelForm):
 class ProjectUpdateForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ["name", "description", "location", "status"]
+        fields = ["name", "description", "location"]
 
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": forms.TextInput(attrs={"class": "form-control"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
-            "status": forms.Select(attrs={"class": "form-control"}),
         }
 
     def save(self, commit=True):

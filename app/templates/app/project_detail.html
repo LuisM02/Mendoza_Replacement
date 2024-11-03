@@ -71,64 +71,70 @@
     <br />
 
     {% if user.is_superuser %}
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Project Information</h5>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Update Project</button>
-            </form>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Project Information</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Update Project</button>
+                </form>
+
+                {% if project.status == 'approved' %}
+                    <a href="{% url 'update_status_completed' project.id %}" class="btn btn-success">Complete</a>
+                {% endif %}
+            </div>
         </div>
-    </div>
 
-    <div class='mt-4'>
-        <a href="{% url 'update_element' project.id %}" class="btn btn-primary">Update element</a>
-    </div>
+        <div class='mt-4'>
+            <a href="{% url 'update_element' project.id %}" class="btn btn-primary">Update element</a>
+        </div>
 
-    <div class="mt-4">
-        <h5>Project Element</h5>
-        <ul class="list-group">
-            {% for element in project.elements.all %}
-                <li class="list-group-item">{{ element.name }}
-                <a href="{% url 'update_material' project_id=project.id element_id=element.id %}" class="btn btn-primary">Update material</a>
+        <div class="mt-4">
+            <h5>Project Element</h5>
+            <ul class="list-group">
+                {% for element in project.elements.all %}
+                    <li class="list-group-item">{{ element.name }}
+                    <a href="{% url 'update_material' project_id=project.id element_id=element.id %}" class="btn btn-primary">Update material</a>
 
-                </li>
-            {% empty %}
-                <li class="list-group-item">No elements associated with this project.</li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="mt-4">
-        <h5>Materials</h5>
-        <ul class="list-group">
-            {% for element in project.elements.all %}
-                {% for material in element.materials.all %}
-                    <li class="list-group-item">
-                        <h5 class="card-title">{{ material.name }}</h5>
-                        <p class="card-text"><strong>Qty:</strong> {{ material.quantity }}</p>
-                        <p class="card-text"><strong>Unit:</strong> {{ material.unit }}</p>
-                        <p class="card-text"><strong>Price/Qty:</strong> {{ material.price_per_qty }}</p>
-                        <p class="card-text"><strong>Markup Percentage:</strong> {{ material.markup_percentage }}%</p>
-
-                        <a href="{% url 'update_material_detail' project_id=project.id element_id=element.id material_id=material.id %}" class="btn btn-primary">Update</a>
                     </li>
                 {% empty %}
                     <li class="list-group-item">No elements associated with this project.</li>
                 {% endfor %}
-            {% empty %}
-                <li class="list-group-item">No elements associated with {{element.name}} with this project.</li>
-            {% endfor %}
-        </ul>
-    </div>
+            </ul>
+        </div>
 
-    <div class="mt-4">
-        <h5>Total Cost</h5>
-        <ul class="list-group">
-            <li class="list-group-item">Php. {{ total_cost }}</li>
-        </ul>
-    </div>
+        <div class="mt-4">
+            <h5>Materials</h5>
+            <ul class="list-group">
+                {% for element in project.elements.all %}
+                    {% for material in element.materials.all %}
+                        <li class="list-group-item">
+                            <h5 class="card-title">{{ material.name }}</h5>
+                            <p class="card-text"><strong>Qty:</strong> {{ material.quantity }}</p>
+                            <p class="card-text"><strong>Unit:</strong> {{ material.unit }}</p>
+                            <p class="card-text"><strong>Price/Qty:</strong> {{ material.price_per_qty }}</p>
+                            <p class="card-text"><strong>Markup Percentage:</strong> {{ material.markup_percentage }}%</p>
+                            <p class="card-text"><strong>Cost:</strong> {{ material.total_cost|floatformat:2 }}</p>
+
+
+                            <a href="{% url 'update_material_detail' project_id=project.id element_id=element.id material_id=material.id %}" class="btn btn-primary">Update</a>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No elements associated with this project.</li>
+                    {% endfor %}
+                {% empty %}
+                    <li class="list-group-item">No elements associated with {{element.name}} with this project.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="mt-4">
+            <h5>Total Cost</h5>
+            <ul class="list-group">
+                <li class="list-group-item">Php. {{ total_cost }}</li>
+            </ul>
+        </div>
     {% else %}
         <div class="card">
             <div class="card-body">
@@ -138,6 +144,14 @@
                 <p class="card-text"><strong>Status:</strong> {{ project.get_status_display }}</p>
                 <p class="card-text"><strong>Start Date:</strong> {{ project.start_date }}</p>
                 <p class="card-text"><strong>End Date:</strong> {{ project.end_date|default:"Not specified" }}</p>
+
+                {% if project.status == 'pending' %}
+                    <a href="{% url 'update_status_approved' project.id %}" class="btn btn-success">Approve</a>
+                    <a href="{% url 'update_status_declined' project.id %}" class="btn btn-danger">Decline</a>
+                {% else %}
+                    <a href="{% url 'update_status_approved' project.id %}" disabled class="btn btn-success">Approve</a>
+                    <a href="{% url 'update_status_declined' project.id %}" disabled class="btn btn-danger">Decline</a>
+                {% endif %}
             </div>
         </div>
 
@@ -163,6 +177,9 @@
                             <p class="card-text"><strong>Unit:</strong> {{ material.unit }}</p>
                             <p class="card-text"><strong>Price/Qty:</strong> {{ material.price_per_qty }}</p>
                             <p class="card-text"><strong>Markup Percentage:</strong> {{ material.markup_percentage }}%</p>
+                            {% if project.status == 'approved' %}
+                                <p class="card-text"><strong>Cost:</strong> {{ material.total_cost }}%</p>
+                            {% endif %}
                         </li>
                     {% empty %}
                         <li class="list-group-item">No elements associated with this project.</li>
@@ -173,12 +190,14 @@
             </ul>
         </div>
 
-        <div class="mt-4">
-            <h5>Total Cost</h5>
-            <ul class="list-group">
-                <li class="list-group-item">Php. {{ total_cost }}</li>
-            </ul>
-        </div>
+        {% if project.status == 'approved' %}
+            <div class="mt-4">
+                <h5>Total Cost</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">Php. {{ total_cost }}</li>
+                </ul>
+            </div>
+        {% endif %}
     {% endif %}
 </div>
 

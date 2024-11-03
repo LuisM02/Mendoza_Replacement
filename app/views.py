@@ -69,7 +69,7 @@ def project_detail(request, project_id):
 
     for element in project.elements.all():
         for material in element.materials.all():
-            total_cost = material.total_cost()
+            total_cost += material.total_cost()
 
     return render(
         request,
@@ -285,6 +285,30 @@ def update_material_detail(request, project_id, element_id, material_id):
     return render(
         request, "app/update_material_detail.html", {"form": form, "material": material}
     )
+
+
+@login_required
+def update_status_approved(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    project.status = "approved"
+
+    return redirect("project_detail", project_id=project.id)
+
+
+@login_required
+def update_status_declined(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    project.status = "declined"
+
+    return redirect("project_detail", project_id=project.id)
+
+
+@login_required
+def update_status_completed(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    project.status = "completed"
+
+    return redirect("project_detail", project_id=project.id)
 
 
 """

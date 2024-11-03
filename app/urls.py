@@ -24,6 +24,21 @@ urlpatterns = [
         views.update_material_detail,
         name="update_material_detail",
     ),
+    path(
+        "<int:project_id>/update_status_approved/",
+        views.update_status_approved,
+        name="update_status_approved",
+    ),
+    path(
+        "<int:project_id>/update_status_declined/",
+        views.update_status_declined,
+        name="update_status_declined",
+    ),
+    path(
+        "<int:project_id>/update_status_completed/",
+        views.update_status_completed,
+        name="update_status_completed",
+    ),
 ]
 
 urlpatterns += [
